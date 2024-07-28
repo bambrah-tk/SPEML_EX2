@@ -1,5 +1,4 @@
 from __future__ import print_function
-
 import argparse
 import os
 import time
@@ -9,19 +8,21 @@ import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.optim as optim
+import torchvision.transforms as transforms
+import torchvision.datasets as datasets
+from torchvision.models import densenet121
 
-from helpers.loaders import *
+from helpers.loaders import getwmloader, getdataloader
 from helpers.utils import adjust_learning_rate
-from models import ResNet18
 from trainer import test, train
 
-parser = argparse.ArgumentParser(description='Train CIFAR-10 models with watermaks.')
+parser = argparse.ArgumentParser(description='Train CIFAR-10 models with watermarks.')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--train_db_path', default='./data', help='the path to the root folder of the traininng data')
-parser.add_argument('--test_db_path', default='./data', help='the path to the root folder of the traininng data')
+parser.add_argument('--train_db_path', default='./data', help='the path to the root folder of the training data')
+parser.add_argument('--test_db_path', default='./data', help='the path to the root folder of the test data')
 parser.add_argument('--dataset', default='cifar10', help='the dataset to train on [cifar10]')
-parser.add_argument('--wm_path', default='./data/trigger_set/', help='the path the wm set')
-parser.add_argument('--wm_lbl', default='labels-cifar.txt', help='the path the wm random labels')
+parser.add_argument('--wm_path', default='./data/trigger_set/', help='the path to the wm set')
+parser.add_argument('--wm_lbl', default='labels-cifar.txt', help='the path to the wm random labels')
 parser.add_argument('--batch_size', default=100, type=int, help='the batch size')
 parser.add_argument('--wm_batch_size', default=2, type=int, help='the wm batch size')
 parser.add_argument('--max_epochs', default=60, type=int, help='the maximum number of epochs')
@@ -31,7 +32,7 @@ parser.add_argument('--save_model', default='model.t7', help='model name')
 parser.add_argument('--load_path', default='./checkpoint/ckpt.t7', help='the path to the pre-trained model, to be used with resume flag')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 parser.add_argument('--wmtrain', '-wmt', action='store_true', help='train with wms?')
-parser.add_argument('--log_dir', default='./log', help='the path the log dir')
+parser.add_argument('--log_dir', default='./log', help='the path to the log dir')
 parser.add_argument('--runname', default='train', help='the exp name')
 
 args = parser.parse_args()
@@ -69,7 +70,7 @@ if args.resume:
     start_epoch = checkpoint['epoch']
 else:
     print('==> Building model..')
-    net = ResNet18(num_classes=n_classes)
+    net = densenet121(pretrained=False, num_classes=n_classes)
 
 net = net.to(device)
 # support cuda
