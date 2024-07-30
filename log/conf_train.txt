@@ -1,6 +1,6 @@
 lr: 0.1
-train_db_path: ~/Datasets
-test_db_path: ~/Datasets
+train_db_path: ./data
+test_db_path: ./data
 dataset: cifar10
 wm_path: ./data/trigger_set/
 wm_lbl: labels-cifar.txt
