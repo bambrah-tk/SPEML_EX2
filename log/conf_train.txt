@@ -12,6 +12,6 @@ save_dir: ./checkpoint/
 save_model: model.t7
 load_path: ./checkpoint/ckpt.t7
 resume: False
-wmtrain: True
+wmtrain: False
 log_dir: ./log
 runname: train

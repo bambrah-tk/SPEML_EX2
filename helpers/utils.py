@@ -1,13 +1,7 @@
-
-"""Some helper functions for PyTorch, including:
-    - get_mean_and_std: calculate the mean and std value of dataset.
-    - msr_init: net parameter initialization.
-    - progress_bar: progress bar mimic xlua.progress.
-"""
-
 import os
 import sys
 import time
+import shutil
 
 import torch
 import torch.nn as nn
@@ -33,20 +27,20 @@ def init_params(net):
     '''Init layer parameters.'''
     for m in net.modules():
         if isinstance(m, nn.Conv2d):
-            init.kaiming_normal(m.weight, mode='fan_out')
-            if m.bias:
-                init.constant(m.bias, 0)
+            init.kaiming_normal_(m.weight, mode='fan_out')
+            if m.bias is not None:
+                init.constant_(m.bias, 0)
         elif isinstance(m, nn.BatchNorm2d):
-            init.constant(m.weight, 1)
-            init.constant(m.bias, 0)
+            init.constant_(m.weight, 1)
+            init.constant_(m.bias, 0)
         elif isinstance(m, nn.Linear):
-            init.normal(m.weight, std=1e-3)
-            if m.bias:
-                init.constant(m.bias, 0)
+            init.normal_(m.weight, std=1e-3)
+            if m.bias is not None:
+                init.constant_(m.bias, 0)
 
 
-_, term_width = os.popen('stty size', 'r').read().split()
-term_width = int(term_width)
+term_size = shutil.get_terminal_size((80, 20))
+term_width = term_size.columns
 
 TOTAL_BAR_LENGTH = 65.
 last_time = time.time()
@@ -135,14 +129,3 @@ def adjust_learning_rate(init_lr, optimizer, epoch, lradj):
     lr = init_lr * (0.1 ** (epoch // lradj))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
-
-
-def re_initializer_layer(model, num_classes, layer=None):
-    """remove the last layer and add a new one"""
-    indim = model.module.linear.in_features
-    private_key = model.module.linear
-    if layer:
-        model.module.linear = layer
-    else:
-        model.module.linear = nn.Linear(indim, num_classes).cuda()
-    return model, private_key
