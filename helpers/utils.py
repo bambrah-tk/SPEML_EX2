@@ -129,3 +129,13 @@ def adjust_learning_rate(init_lr, optimizer, epoch, lradj):
     lr = init_lr * (0.1 ** (epoch // lradj))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
+def re_initializer_layer(model, num_classes, layer=None):
+    """remove the last layer and add a new one"""
+    indim = model.module.linear.in_features
+    private_key = model.module.linear
+    if layer:
+        model.module.linear = layer
+    else:
+        model.module.linear = nn.Linear(indim, num_classes).cuda()
+    return model, private_key
