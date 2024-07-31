@@ -17,7 +17,7 @@ def save_trigger_images(images, labels, save_dir):
 
 # Configuration
 trigger_set_size = 50  # Number of images in the trigger set
-dataset_path = './data'  # Path to the dataset
+dataset_path = './data'  
 
 # CIFAR-10 Trigger Set
 cifar_transform = transforms.Compose([

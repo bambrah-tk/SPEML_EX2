@@ -13,4 +13,3 @@ elif args.dataset == 'fashionmnist':
     wm_path = args.wm_path_fashion
     wm_lbl = os.path.join(wm_path, 'labels.txt')
 
-# Evaluate accuracy, effectiveness, and robustness as previously described

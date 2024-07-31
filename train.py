@@ -74,7 +74,7 @@ def main():
         net = densenet121(pretrained=False, num_classes=n_classes)
 
     net = net.to(device)
-    # support cuda
+
     if device == 'cuda':
         print('Using CUDA')
         print('Parallel training on {0} GPUs.'.format(torch.cuda.device_count()))
